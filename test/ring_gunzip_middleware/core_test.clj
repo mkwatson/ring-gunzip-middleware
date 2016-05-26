@@ -1,23 +1,23 @@
 (ns ring-gunzip-middleware.core-test
   (:require [clojure.test :refer :all]
             [ring-gunzip-middleware.core :refer :all]
-            [cheshire.core :refer [generate-string]]
+            [cheshire.core :refer [parse-string]]
             [clojure.java.io :refer [input-stream output-stream]]))
 
-(defn gzip
-  [in]
-  (let [baos (java.io.ByteArrayOutputStream.)]
-    (with-open [out (-> baos
-                        java.util.zip.GZIPOutputStream.
-                        clojure.java.io/writer)]
-      (.write out in))
-    (let [out (.toByteArray baos)]
-      (.close baos)
-      out)))
+;; (defn gzip
+;;   [in]
+;;   (let [baos (java.io.ByteArrayOutputStream.)]
+;;     (with-open [out (-> baos
+;;                         java.util.zip.GZIPOutputStream.
+;;                         clojure.java.io/writer)]
+;;       (.write out in))
+;;     (let [out (.toByteArray baos)]
+;;       (.close baos)
+;;       out)))
 
-(def body (generate-string {:greeting "Hello World"}))
-(def raw-body (.getBytes body))
-(def gz-body (gzip body))
+(def uncompressed-input-path "resources/raw.json")
+(def compressed-input-path "resources/raw.json.gz")
+(def body (slurp uncompressed-input-path))
 
 (defn wrap-errors
   [handler]
@@ -36,20 +36,22 @@
       wrap-gunzip
       wrap-errors))
 
-(deftest compressed-bodies
+(deftest functional-test
   
   (testing "correstly compressed"
-    (is (app {:body (input-stream gz-body)
-              :headers {"Content-Encoding" "gzip"}})
-        {:status 200
-         :body body}))
+    (is (= (app {:body (input-stream compressed-input-path)
+                 :headers {"content-encoding" "gzip"}})
+           {:status 200
+            :body body
+            :headers {"accept-encoding" "gzip"}})))
 
   (testing "not compressed"
-    (is (app {:body (input-stream raw-body)})
-        {:status 200
-         :body body}))
+    (is (= (app {:body (input-stream uncompressed-input-path)})
+           {:status 200
+            :body body
+            :headers {"accept-encoding" "gzip"}})))
 
   (testing "failures"
-    (is (app {:body (input-stream raw-body)
-              :headers {"Content-Encoding" "gzip"}})
-        {:status 400})))
+    (is (= (app {:body (input-stream uncompressed-input-path)
+                 :headers {"content-encoding" "gzip"}})
+           {:status 400}))))
