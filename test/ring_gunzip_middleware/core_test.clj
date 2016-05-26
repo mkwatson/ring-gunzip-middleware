@@ -1,6 +1,6 @@
-(ns ring-gunzip-middlware.core-test
+(ns ring-gunzip-middleware.core-test
   (:require [clojure.test :refer :all]
-            [ring-gunzip-middlware.core :refer :all]
+            [ring-gunzip-middleware.core :refer :all]
             [cheshire.core :refer [generate-string]]
             [clojure.java.io :refer [input-stream output-stream]]))
 
@@ -40,7 +40,7 @@
   
   (testing "correstly compressed"
     (is (app {:body (input-stream gz-body)
-              :headers {"Content-Type" "gzip"}})
+              :headers {"Content-Encoding" "gzip"}})
         {:status 200
          :body body}))
 
@@ -51,5 +51,5 @@
 
   (testing "failures"
     (is (app {:body (input-stream raw-body)
-              :headers {"Content-Type" "gzip"}})
+              :headers {"Content-Encoding" "gzip"}})
         {:status 400})))

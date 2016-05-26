@@ -1,4 +1,4 @@
-(defproject ring-gunzip-middlware "0.1.0-SNAPSHOT"
+(defproject ring-gunzip-middleware "0.1.1"
   :description "Ring middleware for handling compressed POST/PUT body"
   :url "https://github.com/mkwatson/ring-gunzip-middleware"
   :license {:name "Eclipse Public License"

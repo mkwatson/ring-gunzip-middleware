@@ -1,4 +1,4 @@
-# ring-gunzip-middlware
+# ring-gunzip-middleware
 
 Ring middleware for handling compressed PUT POST bodies.
 
