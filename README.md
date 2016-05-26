@@ -2,7 +2,7 @@
 
 Ring middleware for handling compressed HTTP bodies.
 
-[![Clojars Project](https://img.shields.io/clojars/v/ring-gunzip-middlware.svg)]
+[![Clojars Project](https://img.shields.io/clojars/v/ring-gunzip-middleware.svg)]
 
 ```clojure
 (:require [ring-gunzip-middleware.core :refer [wrap-gunzip]])
